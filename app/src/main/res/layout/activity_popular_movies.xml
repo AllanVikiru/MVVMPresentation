@@ -38,12 +38,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     android:background="?attr/colorPrimary"
-                    app:contentInsetLeft="0dp"
+                    app:contentInsetLeft="30dp"
                     app:contentInsetStart="0dp"
-                    app:contentInsetStartWithNavigation="0dp"
+                    app:contentInsetStartWithNavigation="10dp"
                     tools:subtitle="Some SubTitle"
-                    tools:title="Title"
-                    tools:navigationIcon="?attr/homeAsUpIndicator" />
+                    tools:title="Title"/>
 
                 <com.ferfalk.simplesearchview.SimpleSearchView
                     android:id="@+id/search_view"
@@ -81,7 +80,6 @@
                     android:id="@+id/empty"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/white"
                     android:gravity="center"
                     android:visibility="gone"
                     tools:visibility="gone">
@@ -90,8 +88,26 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="20sp"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         android:text="@string/no_movies_found"
+                        android:layout_gravity="center"/>
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/no_results"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    tools:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"
+                        android:text="@string/no_movie_by_that_title_exists"
                         android:layout_gravity="center"/>
 
                 </FrameLayout>
@@ -100,9 +116,8 @@
                     android:id="@+id/page_loading"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/white"
                     android:gravity="center"
-                    android:visibility="@{popularMoviesViewModel.uiState.showPageLoading ? View.VISIBLE : View.GONE}"
+                    android:visibility="@{popularMoviesViewModel.uiState.isShowPageLoading() ? View.VISIBLE : View.GONE}"
                     tools:visibility="gone">
 
                     <ProgressBar

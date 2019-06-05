@@ -20,7 +20,7 @@ public class Movie {
 
     private String overview;
 
-    private Double popularity;
+    private double popularity;
 
     @SerializedName("backdrop_path")
     private String backdropPath;
@@ -83,11 +83,11 @@ public class Movie {
         this.overview = overview;
     }
 
-    public Double getPopularity() {
+    public double getPopularity() {
         return popularity;
     }
 
-    public void setPopularity(Double popularity) {
+    public void setPopularity(double popularity) {
         this.popularity = popularity;
     }
 

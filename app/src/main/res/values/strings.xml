@@ -3,4 +3,5 @@
     <string name="popularmovies">PopularMovies</string>
     <string name="movie_poster">Movie Poster</string>
     <string name="no_movies_found">No Movies Found</string>
+    <string name="no_movie_by_that_title_exists">No movie by that title exists</string>
 </resources>

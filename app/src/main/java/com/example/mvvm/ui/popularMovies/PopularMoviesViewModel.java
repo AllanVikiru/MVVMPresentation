@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.mvvm.BR;
 import com.example.mvvm.data.models.Movie;
 import com.example.mvvm.data.repositories.MovieRepository;
 
@@ -26,17 +27,19 @@ public class PopularMoviesViewModel extends AndroidViewModel {
 
     private LiveData<List<Movie>> movies;
 
+    public UiState uiState;
+
     PopularMoviesViewModel(Application application) {
         super(application);
         this.movieRepository = new MovieRepository(application);
         this.movies = movieRepository.getPopularMovies();
+        this.uiState = new UiState();
     }
 
     LiveData<List<Movie>> getMoviePopularMovies() {
         return movies;
     }
 
-    public UiState uiState = new UiState();
 
     public class UiState extends BaseObservable {
 
@@ -51,7 +54,7 @@ public class PopularMoviesViewModel extends AndroidViewModel {
 
         public void setShowPageLoading(boolean showPageLoading) {
             this.showPageLoading = showPageLoading;
-            notifyChange();
+            notifyPropertyChanged(BR.showPageLoading);
         }
 
         @Bindable
@@ -61,7 +64,7 @@ public class PopularMoviesViewModel extends AndroidViewModel {
 
         public void setShowNoMovies(boolean showNoMovies) {
             this.showNoMovies = showNoMovies;
-            notifyChange();
+            notifyPropertyChanged(BR.showNoMovies);
         }
 
     }

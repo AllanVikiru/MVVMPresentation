@@ -19,7 +19,7 @@ import com.example.mvvm.data.models.Video;
         MovieGenres.class,
         Video.class
     },
-    version = 1 // Used in migrations. Tells ROOM which version these database is. Any changes
+    version = 2 // Used in migrations. Tells ROOM which version these database is. Any changes
         // to the database is like creating a new version of the database.
 )
 public abstract class MoviesDatabase extends RoomDatabase {

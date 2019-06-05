@@ -7,25 +7,29 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.animation.Animator;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.View;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.example.mvvm.R;
 import com.example.mvvm.data.models.Movie;
 import com.example.mvvm.databinding.PopularMoviesBindings;
+import com.example.mvvm.ui.animators.SlideInUpItemAnimator;
 import com.ferfalk.simplesearchview.SimpleSearchView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import eu.davidea.flexibleadapter.FlexibleAdapter;
-import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager;
+import eu.davidea.flexibleadapter.common.FlexibleItemAnimator;
 import eu.davidea.flexibleadapter.common.SmoothScrollStaggeredLayoutManager;
+import eu.davidea.flexibleadapter.helpers.AnimatorHelper;
 import eu.davidea.flexibleadapter.helpers.EmptyViewHelper;
 import eu.davidea.flexibleadapter.utils.Log;
 
@@ -56,7 +60,7 @@ public class PopularMoviesActivity extends AppCompatActivity {
 
         setupSearchView();
 
-        setupRecyclerViews();
+        setupRecyclerView();
 
         setupSwipeToRefresh();
 
@@ -80,7 +84,7 @@ public class PopularMoviesActivity extends AppCompatActivity {
             popularMoviesBindings.searchView.setMenuItem(menu.findItem(R.id.action_search));
         }
 
-        return false;
+        return true;
     }
 
     @Override
@@ -120,8 +124,17 @@ public class PopularMoviesActivity extends AppCompatActivity {
         @Override
         public void onChanged(List<Movie> movies) {
 
+            /*
+            * We use data binding to change the state of the ui without
+            * having to change it using the views individually.
+            * */
             popularMoviesViewModel.uiState.setShowPageLoading(true);
 
+            /*
+            *  We transform the movies into MovieListItems for use in our Recycler View.
+            *  We could have done it on the View Model but we want Glide to know the activities
+            *  lifecycle, remember we can't keep an instance of the activity in the View Model.
+            *  */
             List<MovieListItem> movieListItems = new ArrayList<>();
             for (Movie movie : movies){
                 movieListItems.add(new MovieListItem(movie,glideRequestManager,getApplicationContext()));
@@ -144,7 +157,6 @@ public class PopularMoviesActivity extends AppCompatActivity {
     private void setupToolbar() {
         setSupportActionBar(popularMoviesBindings.toolbar);
         getSupportActionBar().setTitle("Popular Movies");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void setupSearchView(){
@@ -175,14 +187,18 @@ public class PopularMoviesActivity extends AppCompatActivity {
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-                    fetchPopularMovies();
-                    popularMoviesBindings.swipeToRefreshLayout.setRefreshing(false);
+                        // Remove any searching
+                        popularMoviesBindings.searchView.closeSearch();
+
+                        fetchPopularMovies();
+
+                        popularMoviesBindings.swipeToRefreshLayout.setRefreshing(false);
                     }
                 }
             );
     }
 
-    private void setupRecyclerViews(){
+    private void setupRecyclerView(){
         FlexibleAdapter.enableLogs(Log.Level.DEBUG);
         FlexibleAdapter.useTag("PopularMoviesAdapter");
 
@@ -190,24 +206,31 @@ public class PopularMoviesActivity extends AppCompatActivity {
         mainListAdapter = new FlexibleAdapter<>(null);
         mainListAdapter
                 .addListener(this)
-                .setStickyHeaders(true)
-                .expandItemsAtStartUp()
-                .setAutoCollapseOnExpand(false)
-                .setAutoScrollOnExpand(true)
+                .setAnimationEntryStep(true)
                 .setAnimationOnForwardScrolling(true)
-                .setAnimationOnReverseScrolling(true);
+                .setAnimationOnReverseScrolling(true)
+                .setAnimationInterpolator(new DecelerateInterpolator())
+                .setAnimationDuration(300L);
+
+        // Animations
+        popularMoviesBindings.recyclerView.setItemAnimator(new SlideInUpItemAnimator(new OvershootInterpolator(1f)));
+        popularMoviesBindings.recyclerView.getItemAnimator().setAddDuration(500);
+        popularMoviesBindings.recyclerView.getItemAnimator().setRemoveDuration(500);
 
 
+        // Used to show a view if there are no movies or no results when searching for a movie
         EmptyViewHelper.create(
             mainListAdapter,
-            popularMoviesBindings.empty
+            popularMoviesBindings.empty,
+            popularMoviesBindings.noResults
         );
 
         //LAYOUT MANAGER
         SmoothScrollStaggeredLayoutManager layoutManager =
                 new SmoothScrollStaggeredLayoutManager(this,2);
-
         popularMoviesBindings.recyclerView.setLayoutManager(layoutManager);
+
+        // Finally
         popularMoviesBindings.recyclerView.setHasFixedSize(true);
         popularMoviesBindings.recyclerView.setAdapter(mainListAdapter);
 

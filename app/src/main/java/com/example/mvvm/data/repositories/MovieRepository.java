@@ -40,13 +40,13 @@ public class MovieRepository {
                         new saveMoviesToDB(moviesDao).execute(response.body().getResults());
                     }
                 } else{
-                    //
+                    // Handle errors
                 }
             }
 
             @Override
             public void onFailure(Call<Results<Movie>> call, Throwable t) {
-                //
+                // Handle errors
             }
         });
     }
