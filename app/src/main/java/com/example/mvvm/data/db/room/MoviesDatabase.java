@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase;
 
 import com.example.mvvm.data.models.Genre;
 import com.example.mvvm.data.models.Movie;
-import com.example.mvvm.data.models.MovieGenres;
+import com.example.mvvm.data.models.MovieGenre;
 import com.example.mvvm.data.models.Review;
 import com.example.mvvm.data.models.Video;
 
@@ -16,11 +16,12 @@ import com.example.mvvm.data.models.Video;
         Movie.class,
         Review.class,
         Genre.class,
-        MovieGenres.class,
+        MovieGenre.class,
         Video.class
     },
-    version = 2 // Used in migrations. Tells ROOM which version these database is. Any changes
+    version = 4, // Used in migrations. Tells ROOM which version these database is. Any changes
         // to the database is like creating a new version of the database.
+    exportSchema = false
 )
 public abstract class MoviesDatabase extends RoomDatabase {
 
@@ -45,5 +46,6 @@ public abstract class MoviesDatabase extends RoomDatabase {
     public abstract MoviesDao getMoviesDao();
     public abstract ReviewsDao getReviewsDao();
     public abstract GenreDao getGenreDao();
+    public abstract VideosDao getVideosDao();
 
 }

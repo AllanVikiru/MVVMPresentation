@@ -13,7 +13,7 @@ import retrofit2.http.Query;
 
 public interface MoviesService {
 
-    @GET("movie/{movie_id}")
+    @GET("movie/{movie_id}?append_to_response=videos,reviews")
     public Call<Movie> getMovieDetails(@Path("movie_id") int movie_id);
 
     @GET("movie/popular")

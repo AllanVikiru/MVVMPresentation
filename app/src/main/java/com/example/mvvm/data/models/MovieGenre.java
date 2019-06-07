@@ -1,5 +1,6 @@
 package com.example.mvvm.data.models;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 
@@ -13,9 +14,17 @@ import androidx.room.ForeignKey;
                         parentColumns = "id",
                         childColumns = "genreId")
         })
-public class MovieGenres {
+public class MovieGenre {
+    @ColumnInfo(index = true)
     private int movieId;
+
+    @ColumnInfo(index = true)
     private int genreId;
+
+    public MovieGenre(int movieId, int genreId){
+        this.movieId = movieId;
+        this.genreId = genreId;
+    }
 
     public int getMovieId() {
         return movieId;

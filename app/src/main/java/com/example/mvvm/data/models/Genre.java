@@ -10,6 +10,8 @@ public class Genre {
 
     private String name;
 
+    public Genre(){}
+
     public int getId() {
         return id;
     }

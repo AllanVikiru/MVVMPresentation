@@ -1,22 +1,32 @@
 package com.example.mvvm.data.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.Nullable;
+import androidx.room.ColumnInfo;
+import androidx.room.Embedded;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.example.mvvm.data.network.retrofit.models.Results;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
 @Entity(tableName = "movies")
 public class Movie {
-    @PrimaryKey
+    @PrimaryKey(/*autoGenerate = true*/)
     private int id = -1;
 
     private String title;
 
-    private boolean adult;
+    @SerializedName("adult")
+    private boolean is_for_adult_age;
 
-    private boolean video;
+    @SerializedName("video")
+    private boolean has_video;
 
     private String overview;
 
@@ -43,6 +53,20 @@ public class Movie {
     @SerializedName("vote_count")
     private int voteCount;
 
+    @Nullable
+    @Ignore
+    private List<Genre> genres;
+
+    @Nullable
+    @Ignore
+    private Results<Review> reviews;
+
+    @Nullable
+    @Ignore
+    private Results<Video> videos;
+
+    public Movie(){ }
+
     public int getId() {
         return id;
     }
@@ -59,20 +83,20 @@ public class Movie {
         this.title = title;
     }
 
-    public boolean isAdult() {
-        return adult;
+    public boolean isIs_for_adult_age() {
+        return is_for_adult_age;
     }
 
-    public void setAdult(boolean adult) {
-        this.adult = adult;
+    public void setIs_for_adult_age(boolean is_for_adult_age) {
+        this.is_for_adult_age = is_for_adult_age;
     }
 
-    public boolean isVideo() {
-        return video;
+    public boolean isHas_video() {
+        return has_video;
     }
 
-    public void setVideo(boolean video) {
-        this.video = video;
+    public void setHas_video(boolean has_video) {
+        this.has_video = has_video;
     }
 
     public String getOverview() {
@@ -145,5 +169,32 @@ public class Movie {
 
     public void setVoteCount(int voteCount) {
         this.voteCount = voteCount;
+    }
+
+    @Nullable
+    public List<Genre> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(@Nullable List<Genre> genres) {
+        this.genres = genres;
+    }
+
+    @Nullable
+    public Results<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(@Nullable Results<Review> reviews) {
+        this.reviews = reviews;
+    }
+
+    @Nullable
+    public Results<Video> getVideos() {
+        return videos;
+    }
+
+    public void setVideos(@Nullable Results<Video> videos) {
+        this.videos = videos;
     }
 }

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.animation.Animator;
@@ -18,8 +19,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.example.mvvm.R;
 import com.example.mvvm.data.models.Movie;
+import com.example.mvvm.databinding.MovieDetailsBindings;
 import com.example.mvvm.databinding.PopularMoviesBindings;
 import com.example.mvvm.ui.animators.SlideInUpItemAnimator;
+import com.example.mvvm.ui.movieDetails.MovieDetailsActivity;
 import com.ferfalk.simplesearchview.SimpleSearchView;
 
 import java.util.ArrayList;
@@ -28,12 +31,13 @@ import java.util.List;
 
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.common.FlexibleItemAnimator;
+import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager;
 import eu.davidea.flexibleadapter.common.SmoothScrollStaggeredLayoutManager;
 import eu.davidea.flexibleadapter.helpers.AnimatorHelper;
 import eu.davidea.flexibleadapter.helpers.EmptyViewHelper;
 import eu.davidea.flexibleadapter.utils.Log;
 
-public class PopularMoviesActivity extends AppCompatActivity {
+public class PopularMoviesActivity extends AppCompatActivity implements MovieListItem.MovieListItemListener {
 
     private PopularMoviesViewModel popularMoviesViewModel;
 
@@ -42,6 +46,8 @@ public class PopularMoviesActivity extends AppCompatActivity {
     private FlexibleAdapter<MovieListItem> mainListAdapter;
 
     private RequestManager glideRequestManager;
+
+    public final static String MOVIE_ID_BUNDLE_EXTRA = "movie_id";
 
 //########################### ANDROID CALLBACKS ###########################//
 
@@ -137,7 +143,13 @@ public class PopularMoviesActivity extends AppCompatActivity {
             *  */
             List<MovieListItem> movieListItems = new ArrayList<>();
             for (Movie movie : movies){
-                movieListItems.add(new MovieListItem(movie,glideRequestManager,getApplicationContext()));
+                movieListItems.add(
+                    new MovieListItem(
+                        movie,
+                        glideRequestManager,
+                        getApplicationContext()
+                    ).addListener(PopularMoviesActivity.this) // Add listener for click events
+                );
             }
 
             setPopularMovies(movieListItems);
@@ -261,7 +273,7 @@ public class PopularMoviesActivity extends AppCompatActivity {
     }
 
     /**
-     * Filter items in adapter accoring to query string provided.
+     * Filter items in adapter according to query string provided.
      * */
     private void onSearchQuery(String query){
 
@@ -281,5 +293,19 @@ public class PopularMoviesActivity extends AppCompatActivity {
 
     }
 
-
+    /**
+     * Switch to MovieDetailsActivity to view a movie in
+     * details.
+     * */
+    @Override
+    public void onMovieClicked(Movie movie) {
+        Bundle args = new Bundle();
+        args.putInt(MOVIE_ID_BUNDLE_EXTRA,movie.getId());
+        Intent i = new Intent(
+                PopularMoviesActivity.this,
+                MovieDetailsActivity.class
+        );
+        i.putExtras(args);
+        startActivity(i);
+    }
 }

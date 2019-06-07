@@ -6,8 +6,10 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Transaction;
 
 import com.example.mvvm.data.models.Movie;
+import com.example.mvvm.data.models.MovieWithDetails;
 
 import java.util.List;
 
@@ -27,6 +29,10 @@ public interface MoviesDao {
 
     @Query("SELECT * FROM movies WHERE id=:id")
     public LiveData<Movie> getMovie(int id);
+
+    @Transaction
+    @Query("SELECT * FROM movies WHERE id=:id")
+    public LiveData<MovieWithDetails> getMovieWithDetails(int id);
 
     @Query("SELECT * FROM movies WHERE title LIKE :title")
     public Movie searchForMovie(String title);

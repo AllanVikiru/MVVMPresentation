@@ -1,42 +1,38 @@
-package com.example.mvvm.ui.popularMovies;
+package com.example.mvvm.ui.movieDetails;
 
 import android.app.Application;
-import android.print.PrinterId;
 
+import androidx.annotation.NonNull;
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.example.mvvm.data.models.Movie;
+import com.example.mvvm.data.models.MovieWithDetails;
 import com.example.mvvm.data.repositories.MovieRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
-/**
- * We extend the AndroidViewModel to get the Application context
- * easily.
- * */
-public class PopularMoviesViewModel extends AndroidViewModel {
+public class MovieDetailsViewModel extends AndroidViewModel {
 
     private MovieRepository movieRepository;
 
-    private LiveData<List<Movie>> movies;
+    private LiveData<MovieWithDetails> movie;
 
     public UiState uiState;
 
-    PopularMoviesViewModel(Application application) {
+    public MovieDetailsViewModel(@NonNull Application application) {
         super(application);
+        this.uiState = new MovieDetailsViewModel.UiState();
         this.movieRepository = new MovieRepository(application);
-        this.movies = movieRepository.getPopularMovies();
-        this.uiState = new PopularMoviesViewModel.UiState();
     }
 
-    LiveData<List<Movie>> getMoviePopularMovies() {
-        return movies;
+    public LiveData<MovieWithDetails> getMovieDetails(int movie_id){
+        if(movie == null){
+            this.movie = movieRepository.getMovieDetails(movie_id);
+        }
+        return movie;
     }
 
 
@@ -44,7 +40,6 @@ public class PopularMoviesViewModel extends AndroidViewModel {
 
         private boolean showError = false;
         private boolean showPageLoading = false;
-        private boolean showNoMovies = false;
 
         @Bindable
         public boolean isShowPageLoading() {
@@ -53,16 +48,6 @@ public class PopularMoviesViewModel extends AndroidViewModel {
 
         public void setShowPageLoading(boolean showPageLoading) {
             this.showPageLoading = showPageLoading;
-            notifyChange();
-        }
-
-        @Bindable
-        public boolean isShowNoMovies() {
-            return showNoMovies;
-        }
-
-        public void setShowNoMovies(boolean showNoMovies) {
-            this.showNoMovies = showNoMovies;
             notifyChange();
         }
 

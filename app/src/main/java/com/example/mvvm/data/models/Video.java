@@ -1,5 +1,7 @@
 package com.example.mvvm.data.models;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
@@ -18,8 +20,10 @@ import static androidx.room.ForeignKey.CASCADE;
 public class Video {
 
     @PrimaryKey
-    private int id = -1;
+    @NonNull
+    private String id = "-1";
 
+    @ColumnInfo(index = true)
     private int movieId;
 
     private String name;
@@ -33,11 +37,13 @@ public class Video {
     @Nullable
     private String type;
 
-    public int getId() {
+    public Video() { }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

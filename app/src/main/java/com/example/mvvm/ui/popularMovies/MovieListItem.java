@@ -9,7 +9,6 @@ import android.widget.TextView;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
@@ -18,6 +17,7 @@ import com.example.mvvm.data.Constants;
 import com.example.mvvm.data.models.Movie;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import eu.davidea.flexibleadapter.FlexibleAdapter;
@@ -34,6 +34,7 @@ implements IFilterable<String>, IHolder<Movie> {
     private Movie movie;
     private RequestManager glide;
     private Context context;
+    private List<MovieListItemListener> listeners = new ArrayList<>();
 
     MovieListItem(
             Movie movie,
@@ -44,7 +45,6 @@ implements IFilterable<String>, IHolder<Movie> {
         this.glide = glide;
         this.context = context;
     }
-
 
     @Override
     public Movie getModel(){
@@ -136,6 +136,24 @@ implements IFilterable<String>, IHolder<Movie> {
         holder.movie_popularity.setRating((float) popularity_rating);
         holder.movie_popularity_text.setText(Float.valueOf(new DecimalFormat("#.#").format(popularity_rating)).toString());
 
+        // Listeners
+        holder.main_body.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for(MovieListItemListener listener: listeners){
+                    listener.onMovieClicked(movie);
+                }
+            }
+        });
+    }
+
+    /**
+     * Add a listener that will get notified on actions done to this
+     * movie list item. Return the MovieListItem itself to allow chaining.
+     * */
+    public MovieListItem addListener(MovieListItemListener listener){
+        listeners.add(listener);
+        return this;
     }
 
 
@@ -153,13 +171,17 @@ implements IFilterable<String>, IHolder<Movie> {
             FlexibleAdapter<IFlexible> adapter
         ){
             super(view,adapter);
-            main_body = view.findViewById(R.id.main_body);
+            main_body = view.findViewById(R.id.movie_body);
             movie_poster = view.findViewById(R.id.movie_poster);
             movie_title = view.findViewById(R.id.movie_title);
             movie_popularity = view.findViewById(R.id.movie_popularity);
             movie_popularity_text = view.findViewById(R.id.movie_popularity_text);
         }
 
+    }
+
+    public interface MovieListItemListener{
+        public void onMovieClicked(Movie movie);
     }
 
 }

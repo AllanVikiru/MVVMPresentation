@@ -6,21 +6,20 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import com.example.mvvm.data.models.Genre;
-import com.example.mvvm.data.models.Movie;
 import com.example.mvvm.data.models.Review;
 import com.example.mvvm.data.models.Video;
 
 import java.util.List;
 
 @Dao
-public interface ReviewsDao {
-    @Query("SELECT * FROM reviews WHERE movieId=:movieId")
-    public LiveData<List<Review>> getMovieReviews(int movieId);
+public interface VideosDao {
+
+    @Query("SELECT * FROM videos WHERE movieId=:movieId")
+    public LiveData<List<Video>> getMovieVideos(int movieId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void saveReview(Review review);
+    public void saveVideo(Video video);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void saveReviews(List<Review> review);
+    public void saveVideos(List<Video> video);
 }

@@ -1,5 +1,7 @@
 package com.example.mvvm.data.models;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Index;
@@ -8,19 +10,29 @@ import androidx.room.PrimaryKey;
 import javax.annotation.Nullable;
 
 import static androidx.room.ForeignKey.CASCADE;
+import static androidx.room.ForeignKey.NO_ACTION;
 
 @Entity(tableName = "reviews",
         foreignKeys = {
             @ForeignKey(entity = Movie.class,
                         parentColumns = "id",
                         childColumns = "movieId",
-                        onDelete = CASCADE)
-        })
+                        onDelete = CASCADE,
+                        onUpdate = NO_ACTION) // NO_ACTION - don't disturb the child
+                                              // RESTRICT - don't touch the parent
+                                              // SET_DEFAULT - add default on child's foreign key
+        }
+//        indices = {
+//            @Index(value = "movieId", name = "movieId")
+//        }
+    )
 public class Review {
 
     @PrimaryKey
-    private int id = -1;
+    @NonNull
+    private String id = "-1";
 
+    @ColumnInfo(index = true)
     private int movieId;
 
     private String author;
@@ -28,11 +40,13 @@ public class Review {
     @Nullable
     private String content;
 
-    public int getId() {
+    public Review(){ }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
